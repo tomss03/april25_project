@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>十二宫格抽奖</title>
+  <style>
+    .grid-container {
+      margin-right: auto;
+      margin-left: auto;
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 10px;
+    }
+    body{
+      background-image: url("../src/img/tian.jpg");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      font-size: 20px;
+      display: grid;
+      place-items: center;
+      vertical-align: center;
+      font-family: '华文楷体';
+    }
+    .grid-item {
+      width: 100px;
+      height: 100px;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      border: 3px solid gold;
+      border-radius: 20px;
+    }
+    .grid-item:nth-child(3n){
+      margin-right: 6px;
+    }
+    .disabled {
+      pointer-events: none;
+      background-color: #88bbfa;
+    }
+    .prize{
+      background-color: #ff9999;
+      font-family: '华文新魏';
+      text-shadow: 2px 2px rgba(214, 212, 212, 0);
+      font-size: 26px;
+      color: #5ab9ea;
+    }
+  </style>
+</head>
+<body>
+
+<div id="grid-container" class="grid-container">
+  <!-- 动态生成十二宫格 -->
+</div>
+
+<script>
+  let clickCount = 0;
+  // 初始化十二宫格
+  const gridContainer = document.getElementById('grid-container');
+  const gridItems = [];
+  for (let i = 0; i < 12; i++) {
+    const gridItem = document.createElement('div');
+    gridItem.classList.add('grid-item');
+    gridItem.textContent = i + 1;
+    gridContainer.appendChild(gridItem);
+    gridItems.push(gridItem); // 将格子元素添加到数组中
+  }
+
+  // 随机选择一个格子放置奖品
+  const prizeIndex = Math.floor(Math.random() * 12);
+  const prizeIndex1 = Math.floor(Math.random() * 12);
+  let hasClicked = Array(12).fill(false); // 记录每个格子是否已被点击
+
+  // 添加点击事件监听器到每个格子
+  gridItems.forEach((item, index) => {
+    item.addEventListener('click', function() {
+      checkPrize(index);
+    });
+  });
+
+  function checkPrize(index) {
+    clickCount++;
+
+    if (hasClicked[index]) {
+      return; // 如果已经点击过，则不再响应
+    }
+    hasClicked[index] = true; // 标记为已点击
+
+    const clickedItem = gridItems[index];
+
+    if (index === prizeIndex ) {
+      clickedItem.textContent = '中奖1次';
+      clickedItem.classList.add('prize');
+      alert('第' +clickCount+'次点击中奖，还有一个奖励哦！')
+    }else if(index === prizeIndex1){
+      clickedItem.textContent = '中奖啦';
+      clickedItem.classList.add('prize');
+      alert('恭喜你第' +clickCount+'次点击，中奖啦！后面没有奖品啦！')
+      disableAllGrids();
+    }else {
+      clickedItem.textContent = '谢谢参与';
+      clickedItem.classList.add('disabled');
+    }
+  }
+
+    function disableAllGrids() {
+      gridItems.forEach(item => {
+        item.classList.add('disabled'); // 禁止点击
+        item.removeEventListener('click', checkPrize); // 移除点击事件监听器
+      });
+    }
+</script>
+
+</body>
+</html>
+
